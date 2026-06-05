@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Result - Nios Portal</title>
+    <style>
+        /* Base Styles mimicking the original layout */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Header Styles */
+        .header {
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header img {
+            max-height: 60px;
+        }
+        .header-contact {
+            text-align: right;
+            font-size: 14px;
+            color: #555;
+        }
+        .header-contact a {
+            color: #0056b3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        /* Form Box */
+        .exam-wrapper__container {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+        .exam-wrapper--heading {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #0056b3;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        /* Captcha Styles */
+        .captcha-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .captcha-box {
+            background: #e9ecef;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-decoration: line-through;
+            font-style: italic;
+            border: 1px solid #ccc;
+            user-select: none;
+        }
+        .refresh-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Buttons */
+        .button-set {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            flex: 1;
+        }
+        .button.blue {
+            background-color: #007bff;
+        }
+        .button.blue:hover {
+            background-color: #0056b3;
+        }
+        .button.grey {
+            background-color: #6c757d;
+        }
+
+        /* Result View Styles */
+        #resultView {
+            display: none; /* Hidden by default */
+        }
+        .result-card {
+            background: #fff;
+            padding: 30px;
+            border: 1px solid #4caf50;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .result-card h2 {
+            color: #4caf50;
+        }
+        .download-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: #fff;
+            font-size: 12px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Utility */
+        .error-msg {
+            color: red;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">
+            <img src="logo.png" alt="Website Logo">
+        </div>
+        <div class="header-contact">
+            For any technical query contact on <br>
+            <a href="mailto:Isc@nios.ac.in">Isc@nios.ac.in</a><br/>
+            Toll Free: 1800-180-9393
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div id="searchView" class="exam-wrapper__container">
+            <div class="exam-wrapper--heading">
+                ACADEMIC EXAMINATION RESULT
+            </div>
+            
+            <form id="resultForm">
+                <div class="form-group">
+                    <label for="enrollment">Enrollment Number</label>
+                    <input type="text" id="enrollment" class="form-control" maxlength="12" placeholder="Enter 12 digit number" required>
+                    <div id="enrollmentError" class="error-msg">Invalid Enrollment Number. Please try again.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Captcha</label>
+                    <div class="captcha-container">
+                        <div class="captcha-box" id="captchaDisplay">ABCD</div>
+                        <button type="button" class="refresh-btn" onclick="generateCaptcha()">Refresh</button>
+                    </div>
+                    <input type="text" id="captchaInput" class="form-control" placeholder="Enter Captcha" required>
+                    <div id="captchaError" class="error-msg">Incorrect Captcha.</div>
+                </div>
+
+                <p style="font-size: 12px; color: #666;">Enter your enrollment number and captcha to view the result</p>
+
+                <div class="button-set">
+                    <button type="submit" class="button blue">Submit</button>
+                    <button type="button" class="button grey" onclick="resetForm()">Reset</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="resultView" class="exam-wrapper__container result-card">
+            <h2>Result Found Successfully!</h2>
+            <p><strong>Enrollment Number:</strong> <span id="displayEnrollment"></span></p>
+            <p>Student details and marks have been generated.</p>
+            
+            <a href="your_placeholder_result.pdf" target="_blank" class="download-btn">
+                Download Result PDF
+            </a>
+            
+            <br><br>
+            <button type="button" class="button grey" onclick="location.reload()">Search Another Result</button>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        &copy; 2026 The National Institute of Open Schooling. All Rights Reserved.
+    </footer>
+
+    <script>
+        let currentCaptcha = "";
+
+        // Function to generate random alphanumeric Captcha
+        function generateCaptcha() {
+            const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            let captcha = "";
+            for (let i = 0; i < 5; i++) {
+                captcha += chars[Math.floor(Math.random() * chars.length)];
+            }
+            currentCaptcha = captcha;
+            document.getElementById("captchaDisplay").innerText = captcha;
+        }
+
+        // Initialize captcha on load
+        window.onload = generateCaptcha;
+
+        // Reset Form functionality
+        function resetForm() {
+            document.getElementById("resultForm").reset();
+            document.getElementById("enrollmentError").style.display = "none";
+            document.getElementById("captchaError").style.display = "none";
+            generateCaptcha();
+        }
+
+        // Handle Form Submission
+        document.getElementById("resultForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent page reload
+
+            const enrollmentValue = document.getElementById("enrollment").value.trim();
+            const captchaValue = document.getElementById("captchaInput").value.trim();
+            
+            let hasError = false;
+
+            // Hide previous errors
+            document.getElementById("enrollmentError").style.display = "none";
+            document.getElementById("captchaError").style.display = "none";
+
+            // Validate Captcha
+            if (captchaValue !== currentCaptcha) {
+                document.getElementById("captchaError").style.display = "block";
+                generateCaptcha(); // Refresh captcha on failure
+                hasError = true;
+            }
+
+            // Validate Specific Enrollment Number
+            if (enrollmentValue !== "349342737377") {
+                document.getElementById("enrollmentError").style.display = "block";
+                hasError = true;
+            }
+
+            // If everything is correct, show result
+            if (!hasError) {
+                document.getElementById("searchView").style.display = "none";
+                document.getElementById("resultView").style.display = "block";
+                document.getElementById("displayEnrollment").innerText = enrollmentValue;
+            }
+        });
+    </script>
+</body>
+</html>
